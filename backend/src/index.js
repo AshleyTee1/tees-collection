@@ -11,7 +11,12 @@ const settingsRoutes = require('./routes/settings')
 
 const app = express()
 
-app.use(cors({ origin: process.env.NODE_ENV === 'production' ? 'https://yourdomain.com' : 'http://localhost:5173' }))
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://tees-collection.vercel.app',
+  'https://tees-collection-ashleytee1s-projects.vercel.app',
+]
+app.use(cors({ origin: (origin, cb) => cb(null, !origin || allowedOrigins.some(o => origin.startsWith(o))) }))
 app.use(express.json())
 
 // Serve uploaded files

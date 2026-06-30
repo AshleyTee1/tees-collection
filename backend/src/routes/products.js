@@ -17,7 +17,8 @@ router.get('/', async (req, res) => {
     const products = await prisma.product.findMany({ where, orderBy: { created_at: 'desc' } })
     res.json(products)
   } catch (e) {
-    res.status(500).json({ error: e.message })
+    console.error('PRODUCTS ERROR:', e.code, e.meta, e.stack)
+    res.status(500).json({ error: e.message, code: e.code, meta: e.meta })
   }
 })
 

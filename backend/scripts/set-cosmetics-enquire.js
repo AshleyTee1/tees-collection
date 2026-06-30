@@ -1,0 +1,10 @@
+require('dotenv').config()
+const { PrismaClient } = require('@prisma/client')
+const { PrismaPg } = require('@prisma/adapter-pg')
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL })
+const prisma = new PrismaClient({ adapter })
+
+prisma.product.updateMany({ where: { category: 'cosmetics' }, data: { availability: 'enquire' } })
+  .then(r => { console.log('Updated', r.count, 'cosmetics products to enquire') })
+  .catch(console.error)
+  .finally(() => prisma.$disconnect())

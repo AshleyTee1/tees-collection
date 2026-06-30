@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(extract-text \"C:\\\\Users\\\\USER\\\\Documents\\\\Tee's collection\\\\files\\\\tees-collection-dev-brief.docx\")",
+      "Bash(pandoc \"C:\\\\Users\\\\USER\\\\Documents\\\\Tee's collection\\\\files\\\\tees-collection-dev-brief.docx\" -t markdown)",
+      "Read(//c/Users/USER/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/4604c95f-9616-4112-ae4c-8746134ba2d1/7997f1c3-e287-4c59-87fc-d52c9a1d99cc/skills/docx/**)",
+      "Bash(python scripts/office/unpack.py \"C:\\\\Users\\\\USER\\\\Documents\\\\Tee's collection\\\\files\\\\tees-collection-dev-brief.docx\" \"C:\\\\Users\\\\USER\\\\Documents\\\\Tee's collection\\\\files\\\\brief-unpacked\")",
+      "Bash(pandoc \"C:\\\\Users\\\\USER\\\\Documents\\\\Tee's collection\\\\files\\\\tees-collection-dev-brief.docx\" -t plain)"
+    ]
+  }
+}

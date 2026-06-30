@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String   @id @default(cuid())
+  name          String
+  email         String   @unique
+  whatsapp      String?
+  password_hash String
+  role          Role     @default(CUSTOMER)
+  created_at    DateTime @default(now())
+  orders        Order[]
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+model Product {
+  id                String       @id @default(cuid())
+  name              String
+  description       String
+  category          String
+  origin            String
+  price_usd         Float
+  price_air         Float?
+  price_sea         Float?
+  images            String[]
+  sizes             String[]
+  colours           String[]
+  availability      String       @default("in_stock")
+  shipping          String       @default("both")
+  min_order_qty_sea Int?
+  created_at        DateTime     @default(now())
+  updated_at        DateTime     @updatedAt
+  order_items       OrderItem[]
+}
+
+model Order {
+  id                  String      @id @default(cuid())
+  reference_number    String      @unique
+  user                User?       @relation(fields: [user_id], references: [id])
+  user_id             String?
+  guest_email         String?
+  guest_name          String?
+  whatsapp            String?
+  city                String?
+  items               OrderItem[]
+  subtotal_usd        Float
+  shipping_method     String
+  shipping_cost       Float
+  payment_method      String
+  payment_status      String      @default("pending")
+  order_status        String      @default("received")
+  ecocash_receipt_url String?
+  notes               String?
+  created_at          DateTime    @default(now())
+  updated_at          DateTime    @updatedAt
+}
+
+model OrderItem {
+  id         String   @id @default(cuid())
+  order      Order    @relation(fields: [order_id], references: [id])
+  order_id   String
+  product    Product? @relation(fields: [product_id], references: [id])
+  product_id String?
+  name       String
+  price_usd  Float
+  qty        Int      @default(1)
+  size       String?
+  colour     String?
+  shipping   String?
+}
+
+model CustomOrder {
+  id             String   @id @default(cuid())
+  image_url      String?
+  description    String
+  category       String?
+  quantity       Int?
+  contact_method String
+  contact_value  String
+  name           String
+  city           String?
+  status         String   @default("pending")
+  admin_notes    String?
+  created_at     DateTime @default(now())
+}
+
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+}

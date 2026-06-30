@@ -1,0 +1,93 @@
+const router = require('express').Router()
+const multer = require('multer')
+const prisma = require('../lib/prisma')
+const { requireAdmin } = require('../middleware/auth')
+const { uploadStream } = require('../lib/cloudinary')
+
+const upload = multer({ storage: multer.memoryStorage() })
+
+router.get('/', async (req, res) => {
+  try {
+    const { category, availability, origin, minPrice, maxPrice } = req.query
+    const where = {}
+    if (category) where.category = category
+    if (availability) where.availability = availability
+    if (origin) where.origin = origin
+    if (minPrice || maxPrice) where.price_usd = { gte: minPrice ? +minPrice : undefined, lte: maxPrice ? +maxPrice : undefined }
+    const products = await prisma.product.findMany({ where, orderBy: { created_at: 'desc' } })
+    res.json(products)
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+router.get('/:id', async (req, res) => {
+  try {
+    const product = await prisma.product.findUnique({ where: { id: req.params.id } })
+    if (!product) return res.status(404).json({ error: 'Product not found' })
+    res.json(product)
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+router.post('/', requireAdmin, upload.array('images', 5), async (req, res) => {
+  try {
+    const { name, description, category, origin, price_usd, price_air, price_sea, sizes, colours, availability, shipping, min_order_qty_sea } = req.body
+    const product = await prisma.product.create({
+      data: {
+        name, description, category, origin,
+        price_usd: +price_usd,
+        price_air: price_air ? +price_air : null,
+        price_sea: price_sea ? +price_sea : null,
+        sizes: sizes ? JSON.parse(sizes) : [],
+        colours: colours ? JSON.parse(colours) : [],
+        images: req.files?.length ? await Promise.all(req.files.map(f => uploadStream(f.buffer, 'tees-collection/products'))) : [],
+        availability: availability || 'in_stock',
+        shipping: shipping || 'both',
+        min_order_qty_sea: min_order_qty_sea ? +min_order_qty_sea : null,
+      },
+    })
+    res.status(201).json(product)
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+router.put('/:id', requireAdmin, upload.array('images', 5), async (req, res) => {
+  try {
+    const { name, description, category, origin, price_usd, price_air, price_sea, sizes, colours, availability, shipping, min_order_qty_sea } = req.body
+    const product = await prisma.product.update({
+      where: { id: req.params.id },
+      data: {
+        ...(name && { name }),
+        ...(description && { description }),
+        ...(category && { category }),
+        ...(origin && { origin }),
+        ...(price_usd && { price_usd: +price_usd }),
+        ...(price_air !== undefined && { price_air: price_air ? +price_air : null }),
+        ...(price_sea !== undefined && { price_sea: price_sea ? +price_sea : null }),
+        ...(sizes && { sizes: JSON.parse(sizes) }),
+        ...(colours && { colours: JSON.parse(colours) }),
+        ...(availability && { availability }),
+        ...(shipping && { shipping }),
+        ...(min_order_qty_sea !== undefined && { min_order_qty_sea: min_order_qty_sea ? +min_order_qty_sea : null }),
+        ...(req.files?.length && { images: await Promise.all(req.files.map(f => uploadStream(f.buffer, 'tees-collection/products'))) }),
+      },
+    })
+    res.json(product)
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+router.delete('/:id', requireAdmin, async (req, res) => {
+  try {
+    await prisma.product.delete({ where: { id: req.params.id } })
+    res.status(204).end()
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+module.exports = router

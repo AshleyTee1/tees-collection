@@ -142,7 +142,7 @@ export default function ProductsPage() {
                     onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.borderColor = '#F2B8C6' }}
                     onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.borderColor = 'transparent' }}
                   >
-                    <div style={{ height: 210, background: '#EDD5DC', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '4rem', position: 'relative', overflow: 'hidden' }}>
+                    <div style={{ height: p.category === 'cosmetics' ? 280 : 210, background: '#EDD5DC', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '4rem', position: 'relative', overflow: 'hidden' }}>
                       {p.images?.[0]
                         ? <img src={imgUrl(p.images[0], 500)} alt={p.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                         : <span>🛍️</span>}

@@ -37,15 +37,26 @@ a { text-decoration: none; color: inherit; }
 }
 .animate-marquee { animation: marquee 22s linear infinite; }
 
-/* ── Custom scrollbar ── */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #B07080 #EDD5DC;
+/* ── Custom scrollbar — desktop only ── */
+@media (min-width: 769px) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #B07080 #EDD5DC;
+  }
+  *::-webkit-scrollbar { width: 6px; height: 6px; }
+  *::-webkit-scrollbar-track { background: #EDD5DC; border-radius: 10px; }
+  *::-webkit-scrollbar-thumb { background: #B07080; border-radius: 10px; }
+  *::-webkit-scrollbar-thumb:hover { background: #9A6070; }
 }
-*::-webkit-scrollbar { width: 6px; height: 6px; }
-*::-webkit-scrollbar-track { background: #EDD5DC; border-radius: 10px; }
-*::-webkit-scrollbar-thumb { background: #B07080; border-radius: 10px; }
-*::-webkit-scrollbar-thumb:hover { background: #9A6070; }
+
+/* ── Hide scrollbar on mobile (touch scrolling) ── */
+@media (max-width: 768px) {
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  *::-webkit-scrollbar { display: none; }
+}
 
 /* ── Mobile responsive overrides ── */
 @media (max-width: 768px) {

@@ -3,7 +3,9 @@ const { PrismaPg } = require('@prisma/adapter-pg')
 const { Pool } = require('pg')
 const bcrypt = require('bcrypt')
 
-const DATABASE_URL = 'postgresql://postgres.leeorgotbxitvdqogcti:Listamusarandoga@aws-1-ap-southeast-2.pooler.supabase.com:5432/postgres?pgbouncer=true'
+// Run with: DATABASE_URL="your-connection-string" node reset-admin-prod.js
+const DATABASE_URL = process.env.DATABASE_URL
+if (!DATABASE_URL) { console.error('Set DATABASE_URL env var'); process.exit(1) }
 
 const pool = new Pool({ connectionString: DATABASE_URL, ssl: { rejectUnauthorized: false } })
 const prisma = new PrismaClient({ adapter: new PrismaPg(pool) })

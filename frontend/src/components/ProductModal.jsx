@@ -93,8 +93,9 @@ export default function ProductModal() {
       <div style={{
         background: 'white',
         borderRadius: isMobile ? '20px 20px 0 0' : 20,
-        maxWidth: isMobile ? '100%' : 860,
-        width: '100%',
+        maxWidth: isMobile ? 'none' : 860,
+        width: isMobile ? '100vw' : '100%',
+        margin: 0,
         maxHeight: isMobile ? '95vh' : '90vh',
         overflowY: 'auto',
         boxShadow: '0 24px 72px rgba(44,44,44,0.22)',

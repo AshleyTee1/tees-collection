@@ -77,10 +77,10 @@ export default function HomePage() {
           <h2 style={sectionH2}>Everything You Love,<br /><em style={{ color: '#B07080', fontStyle: 'italic' }}>All in One Place</em></h2>
           <p style={{ color: '#6B5B5F', marginTop: 10, fontSize: '0.95rem' }}>Explore our curated categories — sourced directly from top suppliers in Thailand and China.</p>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 22, maxWidth: 1100, margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(200px, 1fr))', gap: isMobile ? 14 : 22, maxWidth: 1100, margin: '0 auto' }}>
           {CATEGORIES.map(cat => (
             <Link key={cat.name} to={`/shop?category=${encodeURIComponent(cat.name)}`} style={{
-              background: 'white', borderRadius: 14, padding: '36px 20px',
+              background: 'white', borderRadius: 14, padding: isMobile ? '16px 12px' : '36px 20px',
               textAlign: 'center', boxShadow: '0 4px 24px rgba(180,120,140,0.13)',
               textDecoration: 'none', color: 'inherit', display: 'block',
               border: '1.5px solid transparent', transition: 'transform 0.22s',
@@ -88,9 +88,9 @@ export default function HomePage() {
               onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.borderColor = '#F2B8C6' }}
               onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.borderColor = 'transparent' }}
             >
-              <div style={{ width: '100%', height: 140, borderRadius: 10, marginBottom: 14, overflow: 'hidden', background: '#EDD5DC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: '100%', height: isMobile ? 110 : 140, borderRadius: 10, marginBottom: 10, overflow: 'hidden', background: '#EDD5DC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {cat.image
-                  ? <img src={cat.image} alt={cat.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ? <img src={cat.image} alt={cat.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                   : <span style={{ fontSize: '2.8rem' }}>{cat.emoji}</span>}
               </div>
               <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.05rem', fontWeight: 600, marginBottom: 6 }}>{cat.name}</h3>

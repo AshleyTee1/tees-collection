@@ -6,8 +6,22 @@ const { uploadStream } = require('../lib/cloudinary')
 
 const upload = multer({ storage: multer.memoryStorage() })
 
+let productsCache = null
+let cacheTime = 0
+const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+function clearCache() { productsCache = null; cacheTime = 0 }
+
 router.get('/', async (req, res) => {
   try {
+    const hasFilters = req.query.category || req.query.availability || req.query.origin || req.query.minPrice || req.query.maxPrice
+    if (!hasFilters) {
+      if (productsCache && Date.now() - cacheTime < CACHE_TTL) {
+        return res.set('Cache-Control', 'public, max-age=300').json(productsCache)
+      }
+      productsCache = await prisma.product.findMany({ orderBy: { created_at: 'desc' } })
+      cacheTime = Date.now()
+      return res.set('Cache-Control', 'public, max-age=300').json(productsCache)
+    }
     const { category, availability, origin, minPrice, maxPrice } = req.query
     const where = {}
     if (category) where.category = category
@@ -49,6 +63,7 @@ router.post('/', requireAdmin, upload.array('images', 5), async (req, res) => {
         min_order_qty_sea: min_order_qty_sea ? +min_order_qty_sea : null,
       },
     })
+    clearCache()
     res.status(201).json(product)
   } catch (e) {
     res.status(500).json({ error: e.message })
@@ -76,6 +91,7 @@ router.put('/:id', requireAdmin, upload.array('images', 5), async (req, res) => 
         ...(req.files?.length && { images: await Promise.all(req.files.map(f => uploadStream(f.buffer, 'tees-collection/products'))) }),
       },
     })
+    clearCache()
     res.json(product)
   } catch (e) {
     res.status(500).json({ error: e.message })
@@ -85,6 +101,7 @@ router.put('/:id', requireAdmin, upload.array('images', 5), async (req, res) => 
 router.delete('/:id', requireAdmin, async (req, res) => {
   try {
     await prisma.product.delete({ where: { id: req.params.id } })
+    clearCache()
     res.status(204).end()
   } catch (e) {
     res.status(500).json({ error: e.message })

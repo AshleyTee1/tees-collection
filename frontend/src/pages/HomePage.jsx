@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import Footer from '../components/Footer'
 import { useWindowWidth } from '../hooks/useWindowWidth'
+import { imgUrl } from '../lib/cloudinary'
 
 const CATEGORIES = [
   { image: 'https://res.cloudinary.com/dyllerlqa/image/upload/v1782456959/tees-collection/homepage/homepage-cosmetics.jpg', name: 'Cosmetics', desc: 'Skincare, makeup & beauty from Thailand', badge: '🇹🇭 Thai Sourced' },
@@ -90,7 +91,7 @@ export default function HomePage() {
             >
               <div style={{ width: '100%', height: isMobile ? 110 : 140, borderRadius: 10, marginBottom: 10, overflow: 'hidden', background: '#EDD5DC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {cat.image
-                  ? <img src={cat.image} alt={cat.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  ? <img src={imgUrl(cat.image, 400)} alt={cat.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                   : <span style={{ fontSize: '2.8rem' }}>{cat.emoji}</span>}
               </div>
               <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.05rem', fontWeight: 600, marginBottom: 6 }}>{cat.name}</h3>

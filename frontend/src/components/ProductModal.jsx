@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useCartStore } from '../store/cartStore'
 import { useUiStore } from '../store/uiStore'
 import { useWindowWidth } from '../hooks/useWindowWidth'
+import { imgUrl } from '../lib/cloudinary'
 
 const AVAIL_LABEL = { in_stock: 'In Stock', by_order: 'By Order', coming_soon: 'Coming Soon', enquire: 'Enquire' }
 const AVAIL_STYLE = {
@@ -117,7 +118,7 @@ export default function ProductModal() {
                 }}>✕</button>
               )}
               {p.images?.[imgIdx]
-                ? <img src={p.images[imgIdx]} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'contain', maxHeight: isMobile ? 280 : 380 }} />
+                ? <img src={imgUrl(p.images[imgIdx], 800)} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'contain', maxHeight: isMobile ? 280 : 380 }} />
                 : <span>🛍️</span>}
               {p.images?.length > 1 && (
                 <>
@@ -135,8 +136,9 @@ export default function ProductModal() {
                 {p.images.map((img, i) => (
                   <img
                     key={i}
-                    src={img}
+                    src={imgUrl(img, 120)}
                     alt=""
+                    loading="lazy"
                     onClick={() => setImgIdx(i)}
                     style={{
                       width: 52, height: 52, objectFit: 'cover', borderRadius: 8, flexShrink: 0,

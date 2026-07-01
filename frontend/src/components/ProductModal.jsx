@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useCartStore } from '../store/cartStore'
 import { useUiStore } from '../store/uiStore'
+import { useWindowWidth } from '../hooks/useWindowWidth'
 
 const AVAIL_LABEL = { in_stock: 'In Stock', by_order: 'By Order', coming_soon: 'Coming Soon', enquire: 'Enquire' }
 const AVAIL_STYLE = {
@@ -14,6 +15,7 @@ export default function ProductModal() {
   const { modalProduct: p, closeModal } = useUiStore()
   const addItem = useCartStore(s => s.addItem)
   const showToast = useUiStore(s => s.showToast)
+  const isMobile = useWindowWidth() < 768
 
   const [size, setSize] = useState(null)
   const [colour, setColour] = useState(null)
@@ -85,23 +87,36 @@ export default function ProductModal() {
     <div onClick={(e) => e.target === e.currentTarget && closeModal()} style={{
       position: 'fixed', inset: 0, zIndex: 500,
       background: 'rgba(44,44,44,0.45)', backdropFilter: 'blur(4px)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
+      display: 'flex', alignItems: isMobile ? 'flex-end' : 'center',
+      justifyContent: 'center', padding: isMobile ? 0 : 24,
     }}>
       <div style={{
-        background: 'white', borderRadius: 20, maxWidth: 860, width: '100%',
-        maxHeight: '90vh', overflowY: 'auto',
+        background: 'white',
+        borderRadius: isMobile ? '20px 20px 0 0' : 20,
+        maxWidth: isMobile ? '100%' : 860,
+        width: '100%',
+        maxHeight: isMobile ? '95vh' : '90vh',
+        overflowY: 'auto',
         boxShadow: '0 24px 72px rgba(44,44,44,0.22)',
       }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', borderRadius: '20px 0 0 20px', overflow: 'hidden' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', borderRadius: isMobile ? '20px 20px 0 0' : '20px 0 0 20px', overflow: 'hidden' }}>
             {/* Main image with prev/next arrows */}
             <div style={{
-              minHeight: 380, background: '#EDD5DC', position: 'relative',
+              minHeight: isMobile ? 280 : 380, background: '#EDD5DC', position: 'relative',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '6rem', flexShrink: 0,
             }}>
+              {/* Close button on mobile sits over the image */}
+              {isMobile && (
+                <button onClick={closeModal} style={{
+                  position: 'absolute', top: 12, right: 12, zIndex: 10,
+                  background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '50%',
+                  width: 36, height: 36, cursor: 'pointer', fontSize: '1.1rem',
+                }}>✕</button>
+              )}
               {p.images?.[imgIdx]
-                ? <img src={p.images[imgIdx]} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'contain', maxHeight: 380 }} />
+                ? <img src={p.images[imgIdx]} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'contain', maxHeight: isMobile ? 280 : 380 }} />
                 : <span>🛍️</span>}
               {p.images?.length > 1 && (
                 <>
@@ -134,11 +149,13 @@ export default function ProductModal() {
             )}
           </div>
 
-          <div style={{ padding: '36px 32px', overflowY: 'auto' }}>
-            <button onClick={closeModal} style={{
-              float: 'right', background: '#EDD5DC', border: 'none', borderRadius: '50%',
-              width: 34, height: 34, cursor: 'pointer', fontSize: '1.1rem',
-            }}>✕</button>
+          <div style={{ padding: isMobile ? '20px 20px 32px' : '36px 32px', overflowY: 'auto' }}>
+            {!isMobile && (
+              <button onClick={closeModal} style={{
+                float: 'right', background: '#EDD5DC', border: 'none', borderRadius: '50%',
+                width: 34, height: 34, cursor: 'pointer', fontSize: '1.1rem',
+              }}>✕</button>
+            )}
 
             <div style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C9A96E', marginBottom: 4 }}>
               {p.category} · {p.origin === 'thailand' ? '🇹🇭 Thailand' : '🇨🇳 China'}

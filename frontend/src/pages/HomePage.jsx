@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import Footer from '../components/Footer'
+import { useWindowWidth } from '../hooks/useWindowWidth'
 
 const CATEGORIES = [
   { image: 'https://res.cloudinary.com/dyllerlqa/image/upload/v1782456959/tees-collection/homepage/homepage-cosmetics.jpg', name: 'Cosmetics', desc: 'Skincare, makeup & beauty from Thailand', badge: '🇹🇭 Thai Sourced' },
@@ -20,13 +21,14 @@ const HOW_STEPS = [
 const MARQUEE_ITEMS = ['Thai Cosmetics', 'Designer Handbags', 'Baby Essentials', 'Shoes & Sneakers', 'Jewellery', 'Accessories', 'Air & Sea Shipping', 'Custom Orders']
 
 export default function HomePage() {
+  const isMobile = useWindowWidth() < 768
   return (
     <>
       {/* HERO */}
       <section style={{
         background: 'linear-gradient(135deg, #FDF0F5 0%, #FDF6F0 50%, #F9EEF3 100%)',
-        minHeight: '88vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        textAlign: 'center', padding: '60px 24px', position: 'relative', overflow: 'hidden',
+        minHeight: isMobile ? '70vh' : '88vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        textAlign: 'center', padding: isMobile ? '40px 16px' : '60px 24px', position: 'relative', overflow: 'hidden',
       }}>
         <div style={{ position: 'relative', maxWidth: 720 }}>
           <div style={{
@@ -69,7 +71,7 @@ export default function HomePage() {
       </div>
 
       {/* CATEGORIES */}
-      <section style={{ padding: '80px 48px' }}>
+      <section style={{ padding: isMobile ? '40px 16px' : '80px 48px' }}>
         <div style={{ textAlign: 'center', marginBottom: 52 }}>
           <div style={sectionLabel}>Browse by Category</div>
           <h2 style={sectionH2}>Everything You Love,<br /><em style={{ color: '#B07080', fontStyle: 'italic' }}>All in One Place</em></h2>
@@ -100,7 +102,7 @@ export default function HomePage() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section style={{ padding: '80px 48px', background: 'white' }}>
+      <section style={{ padding: isMobile ? '40px 16px' : '80px 48px', background: 'white' }}>
         <div style={{ textAlign: 'center', marginBottom: 52 }}>
           <div style={sectionLabel}>How It Works</div>
           <h2 style={sectionH2}>From Asia to Your <em style={{ color: '#B07080', fontStyle: 'italic' }}>Hands in Zimbabwe</em></h2>
@@ -117,12 +119,12 @@ export default function HomePage() {
       </section>
 
       {/* SHIPPING */}
-      <section style={{ padding: '80px 48px' }}>
+      <section style={{ padding: isMobile ? '40px 16px' : '80px 48px' }}>
         <div style={{
           background: 'linear-gradient(120deg, #F9E4EC 0%, #FDF6F0 100%)',
           borderRadius: 14, padding: '52px 48px',
           maxWidth: 1100, margin: '0 auto',
-          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32, alignItems: 'center',
+          display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 32, alignItems: 'center',
         }}>
           <div>
             <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', marginBottom: 14 }}>Flexible Shipping to <em style={{ fontStyle: 'italic', color: '#B07080' }}>Fit Your Needs</em></h2>

@@ -4,6 +4,7 @@ import { useCartStore } from '../store/cartStore'
 import { useUiStore } from '../store/uiStore'
 import Footer from '../components/Footer'
 import { apiUrl } from '../lib/api'
+import { useWindowWidth } from '../hooks/useWindowWidth'
 
 const CATEGORIES = ['All', 'Cosmetics', 'Shoes', 'Handbags', 'Jewellery', 'Accessories', 'Watches', 'Glasses', 'Wigs & Hair']
 
@@ -26,6 +27,10 @@ export default function ProductsPage() {
   const [priceRange, setPriceRange] = useState([0, 500])
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
+
+  const [showFilters, setShowFilters] = useState(false)
+  const width = useWindowWidth()
+  const isMobile = width < 768
 
   const addItem = useCartStore(s => s.addItem)
   const { openModal, showToast } = useUiStore()
@@ -59,7 +64,7 @@ export default function ProductsPage() {
 
   return (
     <>
-      <div style={{ background: 'linear-gradient(120deg, #FDF0F5 0%, #FDF6F0 100%)', padding: '52px 48px 36px', textAlign: 'center' }}>
+      <div style={{ background: 'linear-gradient(120deg, #FDF0F5 0%, #FDF6F0 100%)', padding: isMobile ? '32px 16px 20px' : '52px 48px 36px', textAlign: 'center' }}>
         <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '2.4rem', fontWeight: 700 }}>
           Shop <em style={{ color: '#B07080', fontStyle: 'italic' }}>Tee's Collection</em>
         </h1>
@@ -67,7 +72,7 @@ export default function ProductsPage() {
       </div>
 
       {/* FILTER CHIPS */}
-      <div style={{ background: 'white', borderBottom: '1px solid #EDD5DC', padding: '16px 48px', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+      <div style={{ background: 'white', borderBottom: '1px solid #EDD5DC', padding: isMobile ? '12px 16px' : '16px 48px', display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
         <span style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#6B5B5F' }}>Category:</span>
         {CATEGORIES.map(cat => (
           <button key={cat} onClick={() => setActiveCategory(cat)} style={{
@@ -79,9 +84,21 @@ export default function ProductsPage() {
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', minHeight: '60vh' }}>
+      {isMobile && (
+        <div style={{ padding: '8px 16px', background: 'white', borderBottom: '1px solid #EDD5DC' }}>
+          <button onClick={() => setShowFilters(f => !f)} style={{
+            padding: '8px 18px', borderRadius: 50, fontSize: '0.8rem', fontWeight: 700,
+            border: '1.5px solid #EDD5DC', background: showFilters ? '#B07080' : 'white',
+            color: showFilters ? 'white' : '#6B5B5F', cursor: 'pointer',
+          }}>
+            {showFilters ? '✕ Hide Filters' : '⚙ Filters'}
+          </button>
+        </div>
+      )}
+
+      <div style={{ display: isMobile ? 'block' : 'grid', gridTemplateColumns: '240px 1fr', minHeight: '60vh' }}>
         {/* SIDEBAR */}
-        <div style={{ background: 'white', borderRight: '1px solid #EDD5DC', padding: '32px 24px' }}>
+        <div style={{ background: 'white', borderRight: '1px solid #EDD5DC', padding: '32px 24px', display: isMobile && !showFilters ? 'none' : 'block' }}>
           <SidebarSection title="Availability">
             <CheckItem label="Ready to Collect" checked={availFilter.in_stock} onChange={v => setAvailFilter(f => ({ ...f, in_stock: v }))} />
             <CheckItem label="Available by Order" checked={availFilter.by_order} onChange={v => setAvailFilter(f => ({ ...f, by_order: v }))} />
@@ -105,7 +122,7 @@ export default function ProductsPage() {
         </div>
 
         {/* PRODUCTS GRID */}
-        <div style={{ padding: '28px 32px', background: '#FDF6F0' }}>
+        <div style={{ padding: isMobile ? '16px' : '28px 32px', background: '#FDF6F0' }}>
           {loading ? (
             <p style={{ color: '#6B5B5F', textAlign: 'center', paddingTop: 60 }}>Loading products...</p>
           ) : filtered.length === 0 ? (

@@ -1,11 +1,13 @@
 import { useNavigate } from 'react-router-dom'
 import { useCartStore } from '../store/cartStore'
 import { useUiStore } from '../store/uiStore'
+import { useWindowWidth } from '../hooks/useWindowWidth'
 
 export default function CartPanel() {
   const { items, removeItem, updateQty, subtotal } = useCartStore()
   const { cartOpen, closeCart } = useUiStore()
   const navigate = useNavigate()
+  const isMobile = useWindowWidth() < 768
 
   const go = () => { closeCart(); navigate('/checkout') }
 
@@ -18,7 +20,7 @@ export default function CartPanel() {
       )}
       <div style={{
         position: 'fixed', top: 0, right: cartOpen ? 0 : -420,
-        height: '100vh', width: 390, zIndex: 401,
+        height: '100vh', width: isMobile ? '100vw' : 390, zIndex: 401,
         background: 'white', boxShadow: '-8px 0 40px rgba(44,44,44,0.15)',
         transition: 'right 0.32s cubic-bezier(.21,1,.49,1)',
         display: 'flex', flexDirection: 'column',

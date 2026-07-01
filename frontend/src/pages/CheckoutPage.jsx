@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom'
 import { useCartStore } from '../store/cartStore'
 import { useUiStore } from '../store/uiStore'
 import { apiUrl } from '../lib/api'
+import { useWindowWidth } from '../hooks/useWindowWidth'
 
 const SHIPPING_COST = { air: 17, sea: 8 }
 
 export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCartStore()
   const showToast = useUiStore(s => s.showToast)
+  const isMobile = useWindowWidth() < 768
   const [siteSettings, setSiteSettings] = useState({ ecocash_number: '077 XXX XXXX', ecocash_name: "Tee's Collection", office_address: 'Bothwell House, First Floor, Office 4\nBetween 1st & 2nd Street along Jason Moyo Avenue, Harare', office_hours: 'Monday – Saturday, 9:30am – 4:30pm', whatsapp_number: '+263 7X XXX XXXX' })
 
   useEffect(() => {
@@ -87,7 +89,7 @@ export default function CheckoutPage() {
       </div>
 
       <form onSubmit={handlePlace}>
-        <div style={{ maxWidth: 960, margin: '0 auto', padding: '48px 24px 80px', display: 'grid', gridTemplateColumns: '1fr 380px', gap: 32, alignItems: 'start' }}>
+        <div style={{ maxWidth: 960, margin: '0 auto', padding: isMobile ? '24px 16px 60px' : '48px 24px 80px', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 380px', gap: isMobile ? 24 : 32, alignItems: 'start' }}>
           <div>
             {/* DETAILS */}
             <Section title="📋 Your Details">

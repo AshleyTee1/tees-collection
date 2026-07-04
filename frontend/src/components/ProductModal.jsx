@@ -48,6 +48,7 @@ export default function ProductModal() {
 
   const hasColours = p.colours.length > 0
   const isEnquire = p.availability === 'enquire'
+  const isOutOfStock = p.availability === 'in_stock' && p.stock_qty !== null && p.stock_qty !== undefined && p.stock_qty <= 0
   const totalSelected = Object.values(selections).reduce((s, q) => s + q, 0)
 
   const changeQty = (delta) => {
@@ -64,7 +65,7 @@ export default function ProductModal() {
   }
 
   const seaMoqMet = !p.min_order_qty_sea || qty >= p.min_order_qty_sea
-  const canAddToCart = p.availability !== 'coming_soon' && p.availability !== 'enquire' &&
+  const canAddToCart = p.availability !== 'coming_soon' && p.availability !== 'enquire' && !isOutOfStock &&
     (hasColours ? totalSelected > 0 : qty > 0)
 
   const handleAdd = () => {
@@ -299,7 +300,7 @@ export default function ProductModal() {
                   color: canAddToCart ? 'white' : '#6B5B5F', border: 'none', marginTop: 8,
                 }}
               >
-                {p.availability === 'coming_soon' ? 'Coming Soon' : hasColours && totalSelected > 0 ? `Add to Cart (${totalSelected} item${totalSelected > 1 ? 's' : ''})` : 'Add to Cart'}
+                {isOutOfStock ? 'Out of Stock' : p.availability === 'coming_soon' ? 'Coming Soon' : hasColours && totalSelected > 0 ? `Add to Cart (${totalSelected} item${totalSelected > 1 ? 's' : ''})` : 'Add to Cart'}
               </button>
             )}
           </div>

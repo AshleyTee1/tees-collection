@@ -37,6 +37,7 @@ model Product {
   availability      String       @default("in_stock")
   shipping          String       @default("both")
   min_order_qty_sea Int?
+  stock_qty         Int?
   created_at        DateTime     @default(now())
   updated_at        DateTime     @updatedAt
   order_items       OrderItem[]

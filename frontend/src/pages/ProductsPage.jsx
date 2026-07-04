@@ -11,9 +11,15 @@ const CATEGORIES = ['All', 'Cosmetics', 'Shoes', 'Handbags', 'Jewellery', 'Acces
 
 const AVAIL_BADGE = {
   in_stock:    { label: 'In Stock',     style: { background: '#D4EDDA', color: '#2D6A4F' } },
+  out_of_stock:{ label: 'Out of Stock', style: { background: '#F8D7DA', color: '#721C24' } },
   by_order:    { label: 'By Order',     style: { background: '#FFF3CD', color: '#856404' } },
   coming_soon: { label: 'Coming Soon',  style: { background: '#EDD5DC', color: '#B07080' } },
   enquire:     { label: 'Enquire',      style: { background: '#E8D5F5', color: '#6B3FA0' } },
+}
+
+function effectiveAvail(p) {
+  if (p.availability === 'in_stock' && p.stock_qty !== null && p.stock_qty !== undefined && p.stock_qty <= 0) return 'out_of_stock'
+  return p.availability
 }
 
 export default function ProductsPage() {
@@ -131,7 +137,8 @@ export default function ProductsPage() {
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: 24 }}>
               {filtered.map(p => {
-                const badge = AVAIL_BADGE[p.availability]
+                const avail = effectiveAvail(p)
+              const badge = AVAIL_BADGE[avail]
                 return (
                   <div key={p.id} onClick={() => openModal(p)} style={{
                     background: 'white', borderRadius: 14, overflow: 'hidden',
@@ -174,15 +181,16 @@ export default function ProductsPage() {
                       ) : (
                         <button
                           onClick={e => { e.stopPropagation(); handleAddToCart(p) }}
+                          disabled={avail === 'out_of_stock'}
                           style={{
                             width: '100%', display: 'flex', justifyContent: 'center',
                             padding: '9px 14px', borderRadius: 10, fontSize: '0.8rem', fontWeight: 700,
-                            fontFamily: "'Lato', sans-serif", cursor: 'pointer',
-                            background: p.availability === 'coming_soon' ? '#C9A96E' : '#B07080',
+                            fontFamily: "'Lato', sans-serif", cursor: avail === 'out_of_stock' ? 'not-allowed' : 'pointer',
+                            background: avail === 'out_of_stock' ? '#ccc' : p.availability === 'coming_soon' ? '#C9A96E' : '#B07080',
                             color: 'white', border: 'none',
                           }}
                         >
-                          {p.availability === 'coming_soon' ? 'Notify Me' : 'Add to Cart'}
+                          {avail === 'out_of_stock' ? 'Out of Stock' : p.availability === 'coming_soon' ? 'Notify Me' : 'Add to Cart'}
                         </button>
                       )}
                     </div>

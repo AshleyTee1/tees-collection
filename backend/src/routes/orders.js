@@ -77,6 +77,16 @@ router.post('/', upload.single('ecocash_receipt'), async (req, res) => {
       include: { items: true },
     })
 
+    // Decrement stock for in-stock products
+    for (const item of parsedItems) {
+      if (item.id) {
+        await prisma.product.updateMany({
+          where: { id: item.id, availability: 'in_stock', stock_qty: { not: null } },
+          data: { stock_qty: { decrement: item.qty || 1 } },
+        })
+      }
+    }
+
     // Send emails (non-blocking)
     const email = user_id
       ? (await prisma.user.findUnique({ where: { id: user_id } }))?.email

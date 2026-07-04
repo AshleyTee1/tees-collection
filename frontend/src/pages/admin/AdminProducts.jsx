@@ -7,7 +7,7 @@ const AVAIL_COLOURS = {
   coming_soon: { bg: '#EDD5DC', color: '#B07080' },
 }
 
-const EMPTY_FORM = { name: '', description: '', category: 'cosmetics', origin: 'thailand', price_usd: '', price_air: '', price_sea: '', sizes: '', colours: '', availability: 'in_stock', shipping: 'both', min_order_qty_sea: '', images: [] }
+const EMPTY_FORM = { name: '', description: '', category: 'cosmetics', origin: 'thailand', price_usd: '', price_air: '', price_sea: '', sizes: '', colours: '', availability: 'in_stock', shipping: 'both', min_order_qty_sea: '', stock_qty: '', images: [] }
 
 const CATEGORIES_WITH_SIZES = ['shoes', 'baby_wear']
 
@@ -38,7 +38,7 @@ export default function AdminProducts() {
   const openNew = () => { setEditing(null); setForm(EMPTY_FORM); setShowForm(true) }
   const openEdit = (p) => {
     setEditing(p.id)
-    setForm({ ...p, sizes: p.sizes?.join(', ') || '', colours: p.colours?.join(', ') || '', min_order_qty_sea: p.min_order_qty_sea || '', price_air: p.price_air || '', price_sea: p.price_sea || '', images: p.images || [] })
+    setForm({ ...p, sizes: p.sizes?.join(', ') || '', colours: p.colours?.join(', ') || '', min_order_qty_sea: p.min_order_qty_sea || '', stock_qty: p.stock_qty ?? '', price_air: p.price_air || '', price_sea: p.price_sea || '', images: p.images || [] })
     setShowForm(true)
   }
 
@@ -124,6 +124,9 @@ export default function AdminProducts() {
               )}
               <FG label="Colours (comma separated)"><input value={form.colours} onChange={set('colours')} placeholder="e.g. Black, White, Pink" style={inputStyle} /></FG>
               <FG label="Min Qty for Sea Shipping"><input type="number" min="0" value={form.min_order_qty_sea} onChange={set('min_order_qty_sea')} placeholder="e.g. 100" style={inputStyle} /></FG>
+              {form.availability === 'in_stock' && (
+                <FG label="Stock Quantity (leave blank if unlimited)"><input type="number" min="0" value={form.stock_qty} onChange={set('stock_qty')} placeholder="e.g. 10" style={inputStyle} /></FG>
+              )}
             </div>
             <FG label="Product Images">
               <input type="file" accept="image/*" multiple onChange={e => setForm(f => ({ ...f, images: Array.from(e.target.files) }))} style={inputStyle} />
@@ -153,7 +156,14 @@ export default function AdminProducts() {
               <div key={p.id} style={{ background: 'white', borderRadius: 12, padding: '16px 24px', display: 'flex', alignItems: 'center', gap: 16, boxShadow: '0 2px 12px rgba(180,120,140,0.08)' }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 700, fontFamily: "'Playfair Display', serif" }}>{p.name}</div>
-                  <div style={{ fontSize: '0.78rem', color: '#6B5B5F', marginTop: 2 }}>{p.category} · {p.origin} · ${p.price_usd}</div>
+                  <div style={{ fontSize: '0.78rem', color: '#6B5B5F', marginTop: 2 }}>
+                    {p.category} · {p.origin} · ${p.price_usd}
+                    {p.availability === 'in_stock' && p.stock_qty !== null && (
+                      <span style={{ marginLeft: 8, fontWeight: 700, color: p.stock_qty === 0 ? '#721C24' : p.stock_qty <= 3 ? '#856404' : '#155724' }}>
+                        · {p.stock_qty === 0 ? '⚠ Out of stock' : `${p.stock_qty} in stock`}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div style={{ padding: '3px 10px', borderRadius: 50, fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', ...ac }}>{p.availability.replace('_', ' ')}</div>
                 <div style={{ fontSize: '0.78rem', color: '#6B5B5F', background: '#FDF6F0', padding: '4px 10px', borderRadius: 8 }}>{p.shipping}</div>

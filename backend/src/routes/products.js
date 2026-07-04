@@ -48,7 +48,7 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', requireAdmin, upload.array('images', 5), async (req, res) => {
   try {
-    const { name, description, category, origin, price_usd, price_air, price_sea, sizes, colours, availability, shipping, min_order_qty_sea } = req.body
+    const { name, description, category, origin, price_usd, price_air, price_sea, sizes, colours, availability, shipping, min_order_qty_sea, stock_qty } = req.body
     const product = await prisma.product.create({
       data: {
         name, description, category, origin,
@@ -61,6 +61,7 @@ router.post('/', requireAdmin, upload.array('images', 5), async (req, res) => {
         availability: availability || 'in_stock',
         shipping: shipping || 'both',
         min_order_qty_sea: min_order_qty_sea ? +min_order_qty_sea : null,
+        stock_qty: stock_qty !== undefined && stock_qty !== '' ? +stock_qty : null,
       },
     })
     clearCache()
@@ -72,7 +73,7 @@ router.post('/', requireAdmin, upload.array('images', 5), async (req, res) => {
 
 router.put('/:id', requireAdmin, upload.array('images', 5), async (req, res) => {
   try {
-    const { name, description, category, origin, price_usd, price_air, price_sea, sizes, colours, availability, shipping, min_order_qty_sea } = req.body
+    const { name, description, category, origin, price_usd, price_air, price_sea, sizes, colours, availability, shipping, min_order_qty_sea, stock_qty } = req.body
     const product = await prisma.product.update({
       where: { id: req.params.id },
       data: {
@@ -88,6 +89,7 @@ router.put('/:id', requireAdmin, upload.array('images', 5), async (req, res) => 
         ...(availability && { availability }),
         ...(shipping && { shipping }),
         ...(min_order_qty_sea !== undefined && { min_order_qty_sea: min_order_qty_sea ? +min_order_qty_sea : null }),
+        ...(stock_qty !== undefined && { stock_qty: stock_qty !== '' ? +stock_qty : null }),
         ...(req.files?.length && { images: await Promise.all(req.files.map(f => uploadStream(f.buffer, 'tees-collection/products'))) }),
       },
     })

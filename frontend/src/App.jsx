@@ -1,8 +1,37 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Toast from './components/Toast'
 import ProductModal from './components/ProductModal'
 import CartPanel from './components/CartPanel'
+import { useCartStore } from './store/cartStore'
+import { useUiStore } from './store/uiStore'
+import { useWindowWidth } from './hooks/useWindowWidth'
+
+function FloatingCart() {
+  const items = useCartStore(s => s.items)
+  const openCart = useUiStore(s => s.openCart)
+  const isMobile = useWindowWidth() < 768
+  const { pathname } = useLocation()
+  const hide = pathname === '/checkout' || pathname === '/confirmation' || pathname === '/login'
+  if (!isMobile || hide || items.length === 0) return null
+  return (
+    <button onClick={openCart} style={{
+      position: 'fixed', bottom: 24, right: 20, zIndex: 300,
+      background: '#B07080', color: 'white', border: 'none', borderRadius: 50,
+      padding: '14px 22px', fontSize: '1rem', fontWeight: 700,
+      fontFamily: "'Lato', sans-serif", cursor: 'pointer',
+      boxShadow: '0 6px 24px rgba(176,112,128,0.45)',
+      display: 'flex', alignItems: 'center', gap: 10,
+    }}>
+      🛍️ Cart
+      <span style={{
+        background: 'white', color: '#B07080', borderRadius: '50%',
+        width: 22, height: 22, fontSize: '0.75rem', fontWeight: 700,
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+      }}>{items.length}</span>
+    </button>
+  )
+}
 import HomePage from './pages/HomePage'
 import ProductsPage from './pages/ProductsPage'
 import CustomOrderPage from './pages/CustomOrderPage'
@@ -42,6 +71,7 @@ export default function App() {
             </Routes>
             <ProductModal />
             <CartPanel />
+            <FloatingCart />
             <Toast />
           </>
         } />

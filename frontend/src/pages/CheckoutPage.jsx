@@ -25,10 +25,14 @@ export default function CheckoutPage() {
   const [payment, setPayment] = useState('eco')
   const [receipt, setReceipt] = useState(null)
   const [submitting, setSubmitting] = useState(false)
+  const [delivery, setDelivery] = useState('collect')
 
   const set = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }))
 
   const hasByOrderItems = items.some(i => i.availability === 'by_order')
+  const hasInStockItems = items.some(i => i.availability === 'in_stock')
+  const cityLower = form.city.toLowerCase().trim()
+  const isOutsideHarare = cityLower.length > 2 && !cityLower.includes('harare')
   const hasSeaItems = items.some(i => i.shipping === 'sea')
   const hasAirItems = items.some(i => i.shipping !== 'sea')
   const shippingCost = hasSeaItems && hasAirItems ? SHIPPING_COST.air + SHIPPING_COST.sea : hasSeaItems ? SHIPPING_COST.sea : SHIPPING_COST.air
@@ -49,6 +53,13 @@ export default function CheckoutPage() {
   const ecocashFee = payment === 'eco' ? depositBase * 0.05 : 0
   const amountDue = depositBase + ecocashFee
   const balanceDue = hasByOrderItems ? fullTotal * 0.5 : 0
+
+  const waNumber = siteSettings.whatsapp_number?.replace(/\D/g, '') || '66625108102'
+  const buildWhatsAppMsg = () => {
+    const itemList = items.map(i => `• ${i.name} x${i.qty || 1}${i.colour ? ` (${i.colour})` : ''}${i.size ? ` [${i.size}]` : ''} — $${(i.price_usd * (i.qty || 1)).toFixed(2)}`).join('\n')
+    const deliveryLabel = delivery === 'biker' ? 'Biker Delivery (Harare)' : 'Courier Delivery'
+    return encodeURIComponent(`Hi Tee's Collection! I'd like to place an order.\n\nName: ${form.firstName} ${form.lastName}\nWhatsApp: ${form.whatsapp}\nCity: ${form.city}\nDelivery: ${deliveryLabel}\n\nItems:\n${itemList}\n\nTotal: $${fullTotal.toFixed(2)}\n\nPlease confirm delivery cost and availability. Thank you!`)
+  }
 
   const handlePlace = async (e) => {
     e.preventDefault()
@@ -100,6 +111,43 @@ export default function CheckoutPage() {
               <FG label="WhatsApp Number"><input required type="tel" value={form.whatsapp} onChange={set('whatsapp')} placeholder="+263 77 123 4567" style={inputStyle} /></FG>
               <FG label="City"><input required value={form.city} onChange={set('city')} placeholder="Harare, Bulawayo..." style={inputStyle} /></FG>
             </Section>
+
+            {/* DELIVERY METHOD — only for in-stock items */}
+            {hasInStockItems && (
+              <Section title="🚚 Collection / Delivery">
+                {isOutsideHarare && (
+                  <div style={{ background: '#FFF8E1', border: '1px solid #FFE082', borderRadius: 10, padding: '12px 14px', fontSize: '0.82rem', color: '#7B5800', marginBottom: 16 }}>
+                    📍 You're outside Harare — we recommend <strong>Courier Delivery</strong> for your in-stock items.
+                  </div>
+                )}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {[
+                    { key: 'collect', icon: '🏢', title: 'Collect from Office', desc: 'Pick up from our Harare office. No extra charge.', badge: 'Free' },
+                    { key: 'biker', icon: '🏍️', title: 'Biker Delivery', desc: 'Local delivery within Harare via biker. We confirm cost on WhatsApp.', badge: 'Harare Only' },
+                    { key: 'courier', icon: '📦', title: 'Courier Delivery', desc: 'Delivery outside Harare via courier. We confirm cost and timeline on WhatsApp.', badge: 'Nationwide' },
+                  ].map(opt => (
+                    <div key={opt.key} onClick={() => setDelivery(opt.key)} style={{
+                      border: `2px solid ${delivery === opt.key ? '#B07080' : '#EDD5DC'}`,
+                      borderRadius: 14, padding: '16px 20px', cursor: 'pointer',
+                      background: delivery === opt.key ? '#FDF0F5' : 'white',
+                      display: 'flex', alignItems: 'center', gap: 16,
+                    }}>
+                      <div style={{ fontSize: '1.8rem' }}>{opt.icon}</div>
+                      <div style={{ flex: 1 }}>
+                        <h4 style={{ fontSize: '0.92rem', fontWeight: 700 }}>{opt.title}</h4>
+                        <p style={{ fontSize: '0.76rem', color: '#6B5B5F', marginTop: 3 }}>{opt.desc}</p>
+                      </div>
+                      <div style={{ fontSize: '0.68rem', fontWeight: 700, padding: '4px 10px', borderRadius: 50, background: '#EDD5DC', color: '#B07080', whiteSpace: 'nowrap' }}>{opt.badge}</div>
+                    </div>
+                  ))}
+                </div>
+                {(delivery === 'biker' || delivery === 'courier') && (
+                  <div style={{ marginTop: 14, background: '#F0FFF4', border: '1px solid #86EFAC', borderRadius: 10, padding: '12px 14px', fontSize: '0.82rem', color: '#166534' }}>
+                    💬 After clicking below, you'll be sent to WhatsApp where we'll confirm your delivery cost and arrange everything with you directly.
+                  </div>
+                )}
+              </Section>
+            )}
 
             {/* PAYMENT */}
             <Section title="💳 Payment Method">
@@ -158,15 +206,30 @@ export default function CheckoutPage() {
               )}
             </Section>
 
-            <button type="submit" disabled={submitting || items.length === 0} style={{
-              width: '100%', display: 'flex', justifyContent: 'center',
-              padding: 15, fontSize: '1rem', fontWeight: 700,
-              fontFamily: "'Lato', sans-serif", borderRadius: 14,
-              background: items.length === 0 ? '#EDD5DC' : '#B07080',
-              color: 'white', border: 'none', cursor: items.length === 0 ? 'not-allowed' : 'pointer',
-            }}>
-              {submitting ? 'Placing Order...' : 'Place Order →'}
-            </button>
+            {(delivery === 'biker' || delivery === 'courier') && hasInStockItems ? (
+              <a
+                href={`https://wa.me/${waNumber}?text=${buildWhatsAppMsg()}`}
+                target="_blank" rel="noreferrer"
+                style={{
+                  width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10,
+                  padding: 15, fontSize: '1rem', fontWeight: 700,
+                  fontFamily: "'Lato', sans-serif", borderRadius: 14,
+                  background: '#25D366', color: 'white', textDecoration: 'none',
+                }}
+              >
+                💬 Continue on WhatsApp →
+              </a>
+            ) : (
+              <button type="submit" disabled={submitting || items.length === 0} style={{
+                width: '100%', display: 'flex', justifyContent: 'center',
+                padding: 15, fontSize: '1rem', fontWeight: 700,
+                fontFamily: "'Lato', sans-serif", borderRadius: 14,
+                background: items.length === 0 ? '#EDD5DC' : '#B07080',
+                color: 'white', border: 'none', cursor: items.length === 0 ? 'not-allowed' : 'pointer',
+              }}>
+                {submitting ? 'Placing Order...' : 'Place Order →'}
+              </button>
+            )}
           </div>
 
           {/* ORDER SUMMARY */}

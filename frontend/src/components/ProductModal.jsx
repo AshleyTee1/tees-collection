@@ -40,8 +40,8 @@ export default function ProductModal() {
   const selectColour = (c) => {
     setColour(c)
     setQty(selections[c] || 0)
-    const idx = p.colours.indexOf(c) + 1
-    if (idx > 0 && idx < p.images.length) setImgIdx(idx)
+    const idx = p.colours.indexOf(c)
+    if (idx >= 0 && idx < p.images.length) setImgIdx(idx)
   }
 
   if (!p) return null
@@ -72,8 +72,8 @@ export default function ProductModal() {
     if (hasColours) {
       const baseImage = p.images?.[0]
       Object.entries(selections).forEach(([col, q]) => {
-        const idx = p.colours.indexOf(col) + 1
-        const selectedImage = (idx > 0 && idx < p.images.length) ? p.images[idx] : baseImage
+        const idx = p.colours.indexOf(col)
+        const selectedImage = (idx >= 0 && idx < p.images.length) ? p.images[idx] : baseImage
         addItem(p, { size, colour: col, qty: q, shipping, selectedImage })
       })
       showToast(`🛍️ ${totalSelected} item${totalSelected > 1 ? 's' : ''} added to cart!`)

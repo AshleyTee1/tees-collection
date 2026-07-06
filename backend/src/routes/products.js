@@ -94,7 +94,12 @@ router.put('/:id', requireAdmin, upload.array('images', 5), async (req, res) => 
         ...(shipping && { shipping }),
         ...(min_order_qty_sea !== undefined && { min_order_qty_sea: min_order_qty_sea ? +min_order_qty_sea : null }),
         ...(stock_qty !== undefined && { stock_qty: stock_qty !== '' ? +stock_qty : null }),
-        ...(req.files?.length && { images: await Promise.all(req.files.map(f => uploadStream(f.buffer, 'tees-collection/products'))) }),
+        ...(await (async () => {
+          const fromUrls = req.body.imageUrls ? JSON.parse(req.body.imageUrls) : []
+          if (fromUrls.length) return { images: fromUrls }
+          if (req.files?.length) return { images: await Promise.all(req.files.map(f => uploadStream(f.buffer, 'tees-collection/products'))) }
+          return {}
+        })()),
       },
     })
     clearCache()

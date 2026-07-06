@@ -119,7 +119,7 @@ export default function ProductModal() {
                 }}>✕</button>
               )}
               {p.images?.[imgIdx]
-                ? <img src={imgUrl(p.images[imgIdx], 800)} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'contain', maxHeight: isMobile ? 280 : 380 }} />
+                ? <img src={imgUrl(p.images[imgIdx], 800)} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover', maxHeight: isMobile ? 280 : 380 }} />
                 : <span>🛍️</span>}
               {p.images?.length > 1 && (
                 <>

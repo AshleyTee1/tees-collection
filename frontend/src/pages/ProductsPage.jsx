@@ -151,7 +151,7 @@ export default function ProductsPage() {
                   >
                     <div style={{ height: p.category === 'cosmetics' ? 280 : 210, background: '#EDD5DC', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '4rem', position: 'relative', overflow: 'hidden' }}>
                       {p.images?.[0]
-                        ? <img src={imgUrl(p.images[0], 500)} alt={p.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                        ? <img src={imgUrl(p.images[0], 500)} alt={p.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         : <span>🛍️</span>}
                       <span style={{ position: 'absolute', top: 12, right: 12, fontSize: '0.66rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '4px 10px', borderRadius: 50, ...badge.style }}>{badge.label}</span>
                     </div>

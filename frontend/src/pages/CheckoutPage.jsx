@@ -29,6 +29,10 @@ export default function CheckoutPage() {
 
   const set = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }))
 
+  const totalByOrderBagQty = items
+    .filter(i => i.category === 'handbags' && i.availability === 'by_order' && i.shipping === 'sea')
+    .reduce((sum, i) => sum + (i.qty || 1), 0)
+  const seaBagsUnderMinimum = totalByOrderBagQty > 0 && totalByOrderBagQty < 50
   const hasByOrderItems = items.some(i => i.availability === 'by_order')
   const hasInStockItems = items.some(i => i.availability === 'in_stock')
   const cityLower = form.city.toLowerCase().trim()
@@ -220,14 +224,14 @@ export default function CheckoutPage() {
                 💬 Continue on WhatsApp →
               </a>
             ) : (
-              <button type="submit" disabled={submitting || items.length === 0} style={{
+              <button type="submit" disabled={submitting || items.length === 0 || seaBagsUnderMinimum} style={{
                 width: '100%', display: 'flex', justifyContent: 'center',
                 padding: 15, fontSize: '1rem', fontWeight: 700,
                 fontFamily: "'Lato', sans-serif", borderRadius: 14,
-                background: items.length === 0 ? '#EDD5DC' : '#B07080',
-                color: 'white', border: 'none', cursor: items.length === 0 ? 'not-allowed' : 'pointer',
+                background: items.length === 0 || seaBagsUnderMinimum ? '#EDD5DC' : '#B07080',
+                color: 'white', border: 'none', cursor: items.length === 0 || seaBagsUnderMinimum ? 'not-allowed' : 'pointer',
               }}>
-                {submitting ? 'Placing Order...' : 'Place Order →'}
+                {submitting ? 'Placing Order...' : seaBagsUnderMinimum ? `Add ${50 - totalByOrderBagQty} more bags for sea shipping` : 'Place Order →'}
               </button>
             )}
           </div>
@@ -286,6 +290,12 @@ export default function CheckoutPage() {
             {totalPassportCoverQty > 0 && totalPassportCoverQty < 10 && (
               <div style={{ marginTop: 8, background: '#EDD5DC', border: '1px solid #F2B8C6', borderRadius: 10, padding: '12px 14px', fontSize: '0.78rem', color: '#B07080' }}>
                 💡 Add <strong>{10 - totalPassportCoverQty} more cover{10 - totalPassportCoverQty !== 1 ? 's' : ''}</strong> to unlock the wholesale price of <strong>$2.50 each</strong>!
+              </div>
+            )}
+
+            {seaBagsUnderMinimum && (
+              <div style={{ marginTop: 8, background: '#F8D7DA', border: '1px solid #F5C6CB', borderRadius: 10, padding: '12px 14px', fontSize: '0.78rem', color: '#721C24' }}>
+                🚢 <strong>Sea shipping wholesale requires 50 bags minimum.</strong> You have <strong>{totalByOrderBagQty}</strong> bag{totalByOrderBagQty !== 1 ? 's' : ''} on sea shipping — add <strong>{50 - totalByOrderBagQty} more</strong> to proceed, or switch to air shipping.
               </div>
             )}
 

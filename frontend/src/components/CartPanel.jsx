@@ -69,6 +69,25 @@ export default function CartPanel() {
               <span style={{ fontSize: '0.84rem', color: '#6B5B5F' }}>Subtotal (excl. shipping)</span>
               <strong style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem' }}>${subtotal().toFixed(2)}</strong>
             </div>
+
+            {/* 50-bag sea shipping wholesale note */}
+            {(() => {
+              const bagQty = items
+                .filter(i => i.category === 'handbags' && i.availability === 'by_order')
+                .reduce((sum, i) => sum + (i.qty || 1), 0)
+              if (bagQty === 0) return null
+              if (bagQty >= 50) return (
+                <div style={{ marginBottom: 14, background: '#D4EDDA', border: '1px solid #C3E6CB', borderRadius: 10, padding: '10px 14px', fontSize: '0.78rem', color: '#155724' }}>
+                  🎉 You have <strong>{bagQty} bags</strong> — you qualify for <strong>sea shipping wholesale pricing</strong>!
+                </div>
+              )
+              return (
+                <div style={{ marginBottom: 14, background: '#FFF8E1', border: '1px solid #FFE082', borderRadius: 10, padding: '10px 14px', fontSize: '0.78rem', color: '#7B5800' }}>
+                  🚢 <strong>Sea shipping wholesale</strong> requires a minimum of <strong>50 bags</strong> total. You currently have <strong>{bagQty}</strong> — add <strong>{50 - bagQty} more</strong> to qualify for wholesale sea rates.
+                </div>
+              )
+            })()}
+
             <button onClick={go} style={{
               width: '100%', display: 'flex', justifyContent: 'center',
               padding: 14, fontSize: '0.9rem', borderRadius: 14,

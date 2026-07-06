@@ -57,7 +57,11 @@ router.post('/', requireAdmin, upload.array('images', 5), async (req, res) => {
         price_sea: price_sea ? +price_sea : null,
         sizes: sizes ? JSON.parse(sizes) : [],
         colours: colours ? JSON.parse(colours) : [],
-        images: req.files?.length ? await Promise.all(req.files.map(f => uploadStream(f.buffer, 'tees-collection/products'))) : [],
+        images: await (async () => {
+          const fromUrls = req.body.imageUrls ? JSON.parse(req.body.imageUrls) : []
+          if (fromUrls.length) return fromUrls
+          return req.files?.length ? await Promise.all(req.files.map(f => uploadStream(f.buffer, 'tees-collection/products'))) : []
+        })(),
         availability: availability || 'in_stock',
         shipping: shipping || 'both',
         min_order_qty_sea: min_order_qty_sea ? +min_order_qty_sea : null,

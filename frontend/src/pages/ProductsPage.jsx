@@ -52,7 +52,7 @@ export default function ProductsPage() {
   const filtered = products.filter(p => {
     if (activeCategory !== 'All' && p.category !== activeCategory.toLowerCase().replace(' ', '_')) return false
     if (p.availability !== 'coming_soon' && availFilter[p.availability] === false) return false
-    if (!originFilter[p.origin]) return false
+    if (!originFilter[p.origin?.toLowerCase()]) return false
     if (p.price_usd < priceRange[0] || p.price_usd > priceRange[1]) return false
     if (!shippingFilter.air && p.shipping === 'air') return false
     if (!shippingFilter.sea && p.shipping === 'sea') return false

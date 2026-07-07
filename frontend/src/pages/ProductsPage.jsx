@@ -50,7 +50,7 @@ export default function ProductsPage() {
   }, [])
 
   const filtered = products.filter(p => {
-    if (activeCategory !== 'All' && p.category !== activeCategory.toLowerCase().replace(' ', '_')) return false
+    if (activeCategory !== 'All' && p.category?.toLowerCase().replace(' ', '_') !== activeCategory.toLowerCase().replace(' ', '_')) return false
     if (p.availability !== 'coming_soon' && availFilter[p.availability] === false) return false
     if (!originFilter[p.origin?.toLowerCase()]) return false
     if (p.price_usd < priceRange[0] || p.price_usd > priceRange[1]) return false

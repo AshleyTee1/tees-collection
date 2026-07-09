@@ -31,6 +31,7 @@ export default function AdminOrders() {
   const load = async () => {
     setLoading(true)
     const res = await fetch(apiUrl(`/api/v1/orders${filter ? `?status=${filter}` : ''}`), { headers: authHeader() })
+    if (res.status === 401) { localStorage.removeItem('tc_token'); window.location.href = '/login'; return }
     if (res.ok) setOrders(await res.json())
     setLoading(false)
   }

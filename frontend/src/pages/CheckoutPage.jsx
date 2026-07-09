@@ -14,7 +14,7 @@ export default function CheckoutPage() {
   const [siteSettings, setSiteSettings] = useState({ ecocash_number: '077 XXX XXXX', ecocash_name: "Tee's Collection", office_address: 'Bothwell House, First Floor, Office 4\nBetween 1st & 2nd Street along Jason Moyo Avenue, Harare', office_hours: 'Monday – Saturday, 9:30am – 4:30pm', whatsapp_number: '+263 7X XXX XXXX' })
 
   useEffect(() => {
-    fetch(apiUrl('/api/v1/settings'), { headers: { Authorization: `Bearer ${localStorage.getItem('tc_token')}` } })
+    fetch(apiUrl('/api/v1/settings/public'))
       .then(r => r.ok ? r.json() : null)
       .then(data => { if (data) setSiteSettings(s => ({ ...s, ...data })) })
       .catch(() => {})

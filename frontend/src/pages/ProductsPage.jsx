@@ -161,12 +161,16 @@ export default function ProductsPage() {
                       </div>
                       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.05rem', fontWeight: 600, marginBottom: 6 }}>{p.name}</div>
                       <div style={{ marginBottom: 12 }}>
-                        <span style={{ fontSize: '1.05rem', fontWeight: 700, color: '#B07080' }}>
-                          ${p.price_sea ?? p.price_usd}
-                        </span>
-                        <span style={{ fontSize: '0.78rem', color: '#6B5B5F', fontWeight: 400 }}> sea</span>
-                        {p.price_usd && p.price_sea && p.price_usd !== p.price_sea && (
-                          <span style={{ fontSize: '0.78rem', color: '#9B8B8F', marginLeft: 8 }}>${p.price_usd} air</span>
+                        {p.price_sea && p.shipping !== 'air' ? (
+                          <>
+                            <span style={{ fontSize: '1.05rem', fontWeight: 700, color: '#B07080' }}>${p.price_sea}</span>
+                            <span style={{ fontSize: '0.78rem', color: '#6B5B5F', fontWeight: 400 }}> sea</span>
+                            {p.price_usd !== p.price_sea && (
+                              <span style={{ fontSize: '0.78rem', color: '#9B8B8F', marginLeft: 8 }}>${p.price_usd} air</span>
+                            )}
+                          </>
+                        ) : (
+                          <span style={{ fontSize: '1.05rem', fontWeight: 700, color: '#B07080' }}>${p.price_usd}</span>
                         )}
                       </div>
                       {p.availability === 'enquire' ? (

@@ -10,6 +10,7 @@ const productRoutes = require('./routes/products')
 const orderRoutes = require('./routes/orders')
 const customOrderRoutes = require('./routes/customOrders')
 const settingsRoutes = require('./routes/settings')
+const analyticsRoutes = require('./routes/analytics')
 
 const app = express()
 
@@ -49,6 +50,7 @@ app.use('/api/v1/products', productRoutes)
 app.use('/api/v1/orders', orderRoutes)
 app.use('/api/v1/custom-orders', customOrderRoutes)
 app.use('/api/v1/settings', settingsRoutes)
+app.use('/api/v1/analytics', analyticsRoutes)
 
 app.get('/api/v1/health', (req, res) => res.json({ status: 'ok' }))
 

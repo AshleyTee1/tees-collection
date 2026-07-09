@@ -99,3 +99,11 @@ model Setting {
   key   String @unique
   value String
 }
+
+model PageView {
+  id         String   @id @default(cuid())
+  path       String
+  referrer   String?
+  user_agent String?
+  created_at DateTime @default(now())
+}

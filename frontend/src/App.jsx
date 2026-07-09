@@ -6,6 +6,12 @@ import CartPanel from './components/CartPanel'
 import { useCartStore } from './store/cartStore'
 import { useUiStore } from './store/uiStore'
 import { useWindowWidth } from './hooks/useWindowWidth'
+import { usePageTracking } from './hooks/usePageTracking'
+
+function Tracker() {
+  usePageTracking()
+  return null
+}
 
 function FloatingCart() {
   const items = useCartStore(s => s.items)
@@ -43,6 +49,7 @@ import AdminOrders from './pages/admin/AdminOrders'
 import AdminCustomOrders from './pages/admin/AdminCustomOrders'
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminSettings from './pages/admin/AdminSettings'
+import AdminAnalytics from './pages/admin/AdminAnalytics'
 
 export default function App() {
   return (
@@ -55,11 +62,13 @@ export default function App() {
           <Route path="custom-orders" element={<AdminCustomOrders />} />
           <Route path="products" element={<AdminProducts />} />
           <Route path="settings" element={<AdminSettings />} />
+          <Route path="analytics" element={<AdminAnalytics />} />
         </Route>
 
         {/* Public routes */}
         <Route path="*" element={
           <>
+            <Tracker />
             <Navbar />
             <Routes>
               <Route path="/" element={<HomePage />} />

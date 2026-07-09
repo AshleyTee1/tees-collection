@@ -29,6 +29,7 @@ export default function AdminLayout() {
     { to: '/admin/custom-orders', label: '✉️ Custom Requests' },
     { to: '/admin/products', label: '🛍️ Products' },
     { to: '/admin/settings', label: '⚙️ Settings' },
+    { to: '/admin/analytics', label: '📊 Analytics' },
   ]
 
   return (

@@ -135,13 +135,13 @@ export default function ProductsPage() {
           ) : filtered.length === 0 ? (
             <p style={{ color: '#6B5B5F', textAlign: 'center', paddingTop: 60 }}>No products match your filters.</p>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: 24 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fill, minmax(230px, 1fr))', gap: isMobile ? 10 : 24 }}>
               {filtered.map(p => {
                 const avail = effectiveAvail(p)
               const badge = AVAIL_BADGE[avail]
                 return (
                   <div key={p.id} onClick={() => openModal(p)} style={{
-                    background: 'white', borderRadius: 14, overflow: 'hidden',
+                    background: 'white', borderRadius: isMobile ? 10 : 14, overflow: 'hidden',
                     boxShadow: '0 4px 24px rgba(180,120,140,0.13)',
                     cursor: 'pointer', border: '1.5px solid transparent',
                     transition: 'transform 0.22s',
@@ -149,9 +149,9 @@ export default function ProductsPage() {
                     onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.borderColor = '#F2B8C6' }}
                     onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.borderColor = 'transparent' }}
                   >
-                    <div style={{ height: p.category === 'cosmetics' ? 280 : 210, background: '#EDD5DC', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '4rem', position: 'relative', overflow: 'hidden' }}>
+                    <div style={{ aspectRatio: '4/3', background: '#F5EEF0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '4rem', position: 'relative', overflow: 'hidden' }}>
                       {p.images?.[0]
-                        ? <img src={imgUrl(p.images[0], 500)} alt={p.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ? <img src={imgUrl(p.images[0], 500)} alt={p.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                         : <span>🛍️</span>}
                       <span style={{ position: 'absolute', top: 12, right: 12, fontSize: '0.66rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '4px 10px', borderRadius: 50, ...badge.style }}>{badge.label}</span>
                     </div>

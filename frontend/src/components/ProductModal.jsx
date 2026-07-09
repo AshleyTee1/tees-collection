@@ -166,25 +166,24 @@ export default function ProductModal() {
             </div>
             <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 700, marginBottom: 6 }}>{p.name}</h2>
             <div style={{ marginBottom: 18 }}>
-              <div style={{ fontSize: '1.3rem', fontWeight: 700, color: '#B07080' }}>
-                ${p.price_usd}
-                <span style={{ fontSize: '0.78rem', color: '#6B5B5F', fontWeight: 400 }}> retail</span>
-              </div>
-              {/* Air wholesale: price_air lower than retail (e.g. passport covers 10+, glasses 10+) */}
-              {p.price_air && p.price_air < p.price_usd && (
-                <div style={{ fontSize: '1rem', fontWeight: 700, color: '#2D6A4F', marginTop: 4 }}>
-                  ${p.price_air}
-                  <span style={{ fontSize: '0.78rem', color: '#6B5B5F', fontWeight: 400 }}>
-                    {' '}wholesale — min. {p.category === 'glasses' ? 10 : p.min_order_qty_sea || 10} {p.unit || (p.category === 'shoes' ? 'pairs' : 'items')} (air)
-                  </span>
+              {/* Sea price — main headline */}
+              {p.price_sea && p.shipping !== 'air' && (
+                <div style={{ fontSize: '1.3rem', fontWeight: 700, color: '#B07080' }}>
+                  ${p.price_sea}
+                  <span style={{ fontSize: '0.78rem', color: '#6B5B5F', fontWeight: 400 }}> 🚢 sea shipping{p.min_order_qty_sea ? ` · min. ${p.min_order_qty_sea} ${p.unit || (p.category === 'shoes' ? 'pairs' : 'items')}` : ''}</span>
                 </div>
               )}
-              {/* Sea wholesale */}
-              {p.price_sea && p.price_sea < p.price_usd && p.shipping !== 'air' && (
-                <div style={{ fontSize: '1rem', fontWeight: 700, color: '#2D6A4F', marginTop: 4 }}>
-                  ${p.price_sea}
+              {/* Air price */}
+              <div style={{ fontSize: p.price_sea && p.shipping !== 'air' ? '1rem' : '1.3rem', fontWeight: 700, color: p.price_sea && p.shipping !== 'air' ? '#2C2C2C' : '#B07080', marginTop: p.price_sea && p.shipping !== 'air' ? 6 : 0 }}>
+                ${p.price_usd}
+                <span style={{ fontSize: '0.78rem', color: '#6B5B5F', fontWeight: 400 }}> ✈️ air shipping</span>
+              </div>
+              {/* Air wholesale if applicable */}
+              {p.price_air && p.price_air < p.price_usd && (
+                <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#2D6A4F', marginTop: 4 }}>
+                  ${p.price_air}
                   <span style={{ fontSize: '0.78rem', color: '#6B5B5F', fontWeight: 400 }}>
-                    {' '}wholesale — min. {p.min_order_qty_sea || 50} {p.unit || (p.category === 'shoes' ? 'pairs' : 'items')} (sea)
+                    {' '}wholesale air — min. {p.min_order_qty_sea || 10} {p.unit || (p.category === 'shoes' ? 'pairs' : 'items')}
                   </span>
                 </div>
               )}

@@ -148,4 +148,14 @@ router.put('/:id/status', requireAdmin, async (req, res) => {
   }
 })
 
+router.delete('/:id', requireAdmin, async (req, res) => {
+  try {
+    await prisma.orderItem.deleteMany({ where: { order_id: req.params.id } })
+    await prisma.order.delete({ where: { id: req.params.id } })
+    res.json({ ok: true })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
 module.exports = router

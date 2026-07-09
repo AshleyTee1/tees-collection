@@ -46,6 +46,13 @@ export default function AdminOrders() {
     load()
   }
 
+  const deleteOrder = async (id, ref) => {
+    if (!window.confirm(`Delete order ${ref}? This cannot be undone.`)) return
+    await fetch(apiUrl(`/api/v1/orders/${id}`), { method: 'DELETE', headers: authHeader() })
+    setExpanded(null)
+    load()
+  }
+
   return (
     <div style={{ padding: 36 }}>
       <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 700, marginBottom: 24 }}>Orders</h1>
@@ -129,6 +136,15 @@ export default function AdminOrders() {
                       {['confirmed', 'shipped_air', 'shipped_sea', 'ready_for_collection', 'completed', 'cancelled'].map(s => (
                         <ActionBtn key={s} label={s.replace(/_/g, ' ')} color="#2C2C2C" bg="#EDD5DC" onClick={() => updateStatus(order.id, s, undefined)} />
                       ))}
+                    </div>
+
+                    <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid #EDD5DC' }}>
+                      <button
+                        onClick={() => deleteOrder(order.id, order.reference_number)}
+                        style={{ padding: '7px 16px', borderRadius: 8, fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer', background: '#F8D7DA', color: '#721C24', border: 'none' }}
+                      >
+                        🗑 Delete Order
+                      </button>
                     </div>
 
                     {order.order_status === 'ready_for_collection' && order.whatsapp && (

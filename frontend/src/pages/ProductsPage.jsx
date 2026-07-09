@@ -164,9 +164,9 @@ export default function ProductsPage() {
                         <span style={{ fontSize: '1.05rem', fontWeight: 700, color: '#B07080' }}>
                           ${p.price_sea ?? p.price_usd}
                         </span>
-                        <span style={{ fontSize: '0.78rem', color: '#6B5B5F', fontWeight: 400 }}> 🚢 sea</span>
+                        <span style={{ fontSize: '0.78rem', color: '#6B5B5F', fontWeight: 400 }}> sea</span>
                         {p.price_usd && p.price_sea && p.price_usd !== p.price_sea && (
-                          <span style={{ fontSize: '0.78rem', color: '#9B8B8F', marginLeft: 8 }}>${p.price_usd} ✈️ air</span>
+                          <span style={{ fontSize: '0.78rem', color: '#9B8B8F', marginLeft: 8 }}>${p.price_usd} air</span>
                         )}
                       </div>
                       {p.availability === 'enquire' ? (

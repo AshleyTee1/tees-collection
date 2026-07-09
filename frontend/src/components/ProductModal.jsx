@@ -170,13 +170,13 @@ export default function ProductModal() {
               {p.price_sea && p.shipping !== 'air' && (
                 <div style={{ fontSize: '1.3rem', fontWeight: 700, color: '#B07080' }}>
                   ${p.price_sea}
-                  <span style={{ fontSize: '0.78rem', color: '#6B5B5F', fontWeight: 400 }}> 🚢 sea shipping{p.min_order_qty_sea ? ` · min. ${p.min_order_qty_sea} ${p.unit || (p.category === 'shoes' ? 'pairs' : 'items')}` : ''}</span>
+                  <span style={{ fontSize: '0.78rem', color: '#6B5B5F', fontWeight: 400 }}> sea shipping{p.min_order_qty_sea ? ` · min. ${p.min_order_qty_sea} ${p.unit || (p.category === 'shoes' ? 'pairs' : 'items')}` : ''}</span>
                 </div>
               )}
               {/* Air price */}
               <div style={{ fontSize: p.price_sea && p.shipping !== 'air' ? '1rem' : '1.3rem', fontWeight: 700, color: p.price_sea && p.shipping !== 'air' ? '#2C2C2C' : '#B07080', marginTop: p.price_sea && p.shipping !== 'air' ? 6 : 0 }}>
                 ${p.price_usd}
-                <span style={{ fontSize: '0.78rem', color: '#6B5B5F', fontWeight: 400 }}> ✈️ air shipping</span>
+                <span style={{ fontSize: '0.78rem', color: '#6B5B5F', fontWeight: 400 }}> air shipping</span>
               </div>
               {/* Air wholesale if applicable */}
               {p.price_air && p.price_air < p.price_usd && (

@@ -106,7 +106,7 @@ export default function ProductModal() {
           <div style={{ display: 'flex', flexDirection: 'column', borderRadius: isMobile ? '20px 20px 0 0' : '20px 0 0 20px', overflow: 'hidden' }}>
             {/* Main image with prev/next arrows */}
             <div style={{
-              minHeight: isMobile ? 280 : 380, background: '#EDD5DC', position: 'relative',
+              aspectRatio: '4/3', background: '#F5EEF0', position: 'relative',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '6rem', flexShrink: 0,
             }}>
@@ -119,7 +119,7 @@ export default function ProductModal() {
                 }}>✕</button>
               )}
               {p.images?.[imgIdx]
-                ? <img src={imgUrl(p.images[imgIdx], 800)} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover', maxHeight: isMobile ? 280 : 380 }} />
+                ? <img src={imgUrl(p.images[imgIdx], 800)} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 : <span>🛍️</span>}
               {p.images?.length > 1 && (
                 <>

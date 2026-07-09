@@ -65,9 +65,12 @@ export default function CheckoutPage() {
     return encodeURIComponent(`Hi Tee's Collection! I'd like to place an order.\n\nName: ${form.firstName} ${form.lastName}\nWhatsApp: ${form.whatsapp}\nCity: ${form.city}\nDelivery: ${deliveryLabel}\n\nItems:\n${itemList}\n\nTotal: $${fullTotal.toFixed(2)}\n\nPlease confirm delivery cost and availability. Thank you!`)
   }
 
+  const [orderError, setOrderError] = useState(null)
+
   const handlePlace = async (e) => {
     e.preventDefault()
     setSubmitting(true)
+    setOrderError(null)
     try {
       const body = new FormData()
       body.append('guest_email', form.email)
@@ -86,11 +89,11 @@ export default function CheckoutPage() {
         clearCart()
         navigate('/confirmation', { state: { ref: data.reference_number, payment } })
       } else {
-        throw new Error()
+        const err = await res.json().catch(() => ({}))
+        setOrderError(err.error || 'Something went wrong. Please try again.')
       }
     } catch {
-      clearCart()
-      navigate('/confirmation', { state: { ref: 'TC-2025-' + Math.floor(Math.random() * 90000 + 10000), payment } })
+      setOrderError('Could not connect to the server. Please check your connection and try again.')
     } finally {
       setSubmitting(false)
     }
@@ -209,6 +212,12 @@ export default function CheckoutPage() {
                 </div>
               )}
             </Section>
+
+            {orderError && (
+              <div style={{ marginBottom: 16, background: '#F8D7DA', border: '1px solid #F5C6CB', borderRadius: 10, padding: '12px 16px', fontSize: '0.84rem', color: '#721C24', fontWeight: 600 }}>
+                {orderError}
+              </div>
+            )}
 
             {(delivery === 'biker' || delivery === 'courier') && hasInStockItems ? (
               <a
